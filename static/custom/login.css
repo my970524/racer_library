@@ -1,0 +1,30 @@
+.container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.container h1 {
+    font-size: 40px;
+    margin-bottom: 70px;
+}
+
+.container form {
+    width: 80%;
+}
+
+.container form input {
+    margin-bottom: 30px;
+}
+
+.container button {
+    margin-bottom: 30px;
+    color: #ffffff;
+}
+
+.container a {
+    text-decoration: none;
+    color: #ffffff;
+}
