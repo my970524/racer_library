@@ -1,34 +1,55 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <title>Racer Library</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="../static/bootstrap/css/bootstrap.min.css">
-  <link rel="stylesheet" href="../static/custom/login.css">
-  <link rel="stylesheet" href="../static/custom/common.css">
-  <link href="//font.elice.io/EliceDigitalBaeum.css" rel="stylesheet">
-  <script src="../static/bootstrap.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-</head>
-<body>
+{% extends 'base.html' %}
 
-<div class="container">
-        <h1>Welcome to Racer Library</h1>
-        <p>레이서 도서관을 이용하시려면 로그인 해주세요</p>
-        <form>
-          <div class="form-group">
-            <input type="email" class="form-control" id="email" placeholder="Enter email" name="email">
-          </div>
-          <div class="form-group">
-            <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="pswd">
-          </div>
-        </form>
-        <button type="submit" class="btn btn-warning">Login</button>
-        <p>아직 회원이 아니라면 회원가입 후 이용해 주세요</p>
-        <a href="register" class="btn btn-warning">Sign Up</a>
-</div>
+{% block customCss %}
+  <link rel="stylesheet" href="{{ url_for ('static', filename='./custom/login.css') }}">
+{% endblock %}
 
-</body>
-</html>
+{% block scripts %}
+  <script>
+    function login() {
+      let email = $("#email").val()
+      let pwd = $("#pwd").val()
+
+      $.ajax({
+        url: '/login',
+        type: 'post',
+        data: {
+          'email': email,
+          'pwd': pwd
+        },
+        success: function(res) {
+          if(res['result'] == 'success') {
+            alert('로그인 성공!👍')
+            window.location.href = '/'
+          } else if(res['result'] == 'fail'){
+            alert('비밀번호가 올바르지 않습니다.🧐')
+          } else {
+            alert('존재하지 않는 사용자 입니다.😅')
+          }
+        }
+      })
+    }
+  </script>
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <h1>Welcome to Racer Library</h1>
+    <p>레이서 도서관을 이용하시려면 로그인 해주세요</p>
+    <form class="was-validated">
+      <div class="form-group">
+        <input type="email" class="form-control" id="email" placeholder="Enter email" name="email" required>
+        <div class="valid-feedback">Valid.</div>
+        <div class="invalid-feedback">Please fill out this field.</div>
+      </div>
+      <div class="form-group">
+        <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="pwd" required>
+        <div class="valid-feedback">Valid.</div>
+        <div class="invalid-feedback">Please fill out this field.</div>
+      </div>
+    </form>
+    <button onclick=login() class="btn btn-warning">Login</button>
+    <p>아직 회원이 아니라면 회원가입 후 이용해 주세요</p>
+    <a href="register" class="btn btn-warning">Sign Up</a>
+  </div>
+{% endblock %}

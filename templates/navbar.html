@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block customCss %}
+    <link rel="stylesheet" href="../static/custom/navbar.css">
+{% endblock %}
+
+
+{% block navbar %}
+    <nav class="navbar navbar-expand-sm bg-warning fixed-top">
+        <!-- Brand/logo -->
+        <a class="navbar-brand" href="/">
+            <img src="../static/racer-library logo.png" alt="로고이미지" width="80px"   height="80px">
+        </a>
+        
+        <!-- Links -->
+        <ul class="navbar-nav">
+            {% if not session['login'] %}
+            <li class="nav-item">
+                <a class="nav-link" href="/login">Login</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/register">Sign up</a>
+            </li>
+            {% else %}
+            <li class="nav-item">
+                <a class="nav-link" href="/logout">Logout</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/">대여기록</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/">반납하기</a>
+            </li>
+            {% if user %}
+            <li class="nav-item">
+                <p>반갑습니다, {{ user.name }}님</p>
+            </li>
+            {% endif %}
+            {% endif %}
+        </ul>
+    </nav>
+{% endblock %}
+

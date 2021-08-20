@@ -1,37 +1,69 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <title>Racer Library</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="../static/bootstrap/css/bootstrap.min.css">
-  <link rel="stylesheet" href="../static/custom/login.css">
-  <link rel="stylesheet" href="../static/custom/common.css">
-  <link href="//font.elice.io/EliceDigitalBaeum.css" rel="stylesheet">
-  <script src="../static/bootstrap.min.js"></script>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-</head>
-<body>
+{% extends 'base.html' %}
 
-<div class="container">
+{% block customCss %}
+    <link rel="stylesheet" href="{{ url_for ('static', filename='./custom/login.css') }}">
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        function regist() {
+            let email = $("#email").val()
+            let name = $("#name").val()
+            let pwd = $("#pwd").val()
+            let pwd2 = $("#pwd2").val()
+
+            if(pwd != pwd2) {
+                alert("비밀번호를 다시 확인해 주세요!😆");
+                return;
+            }
+            $.ajax({
+                url: "/register",
+                type: "post",
+                data: {
+                    'email': email,
+                    'name': name,
+                    'pwd': pwd,
+                },
+                success: function(res) {
+                    if(res['result'] == 'success') {
+                        alert("회원가입이 성공적으로 완료되었습니다!👍")
+                        window.location.href = '/login'
+                    } else if(res['result'] == "email_check") {
+                        alert("이미 존재하는 이메일 입니다.😁")
+                    } else {
+                        alert("비밀번호는 8자리 이상이어야 합니다!😲")
+                    }
+                }
+            });
+        }
+    </script>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
         <h1>회원가입 해주세요</h1>
-        <form>
+        <form class="was-validated">
             <div class="form-group">
-                <input type="text" class="form-control" id="name" placeholder="What's your name?" name="name">
+                <input type="email" class="form-control" id="email" placeholder="Enter Email" name="email" required>
+                <div class="valid-feedback">Valid.</div>
+                <div class="invalid-feedback">Please fill out this field.</div>
             </div>
             <div class="form-group">
-                <input type="email" class="form-control" id="email"     placeholder="Enter email" name="email">
+                <input type="text" class="form-control" id="name" placeholder="What's your name?" name="name" required>
+                <div class="valid-feedback">Valid.</div>
+                <div class="invalid-feedback">Please fill out this field.</div>
             </div>
             <div class="form-group">
-                <input type="password" class="form-control" id="pwd"    placeholder="Enter password" name="password">
+                <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="password" required>
+                <div class="valid-feedback">Valid.</div>
+                <div class="invalid-feedback">Please fill out this field.</div>
             </div>
             <div class="form-group">
-                <input type="password" class="form-control" id="pwd" placeholder="Password Check" name="password">
+                <input type="password" class="form-control" id="pwd2" placeholder="Password Check" required>
+                <div class="valid-feedback">Valid.</div>
+                <div class="invalid-feedback">Please fill out this field.</div>
             </div>
         </form>
-        <button type="submit" class="btn btn-warning">Submit</button>
-</div>
-
-</body>
-</html>
+        <button onclick=regist() class="btn btn-warning">Submit</button>
+    </div>
+{% endblock %}
