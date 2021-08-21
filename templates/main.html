@@ -37,7 +37,7 @@
             {% for book in books %}
             <div class="col-md-3" id="{{ book.id }}">
                 <div class="card mt-3">
-                    <a href="/">
+                    <a href="/book/{{ book.id }}">
                         <img class="card-img-top" src="../static/book_img/{{ book.id }}.jpg" alt="book1">
                     </a>
                     <div class="card-body">

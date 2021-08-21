@@ -79,7 +79,7 @@ def logout():
 def borrow():
     book_id = request.form['book_id']
 
-    book = Book.query.filter(Book.id == book_id).first()
+    book = db.session.query(Book).filter(Book.id == book_id).first()
     
     if 'login' not in session:
         return jsonify({"result": "login_fail"})
@@ -92,10 +92,23 @@ def borrow():
                 user_book = User_Book(session['login'], book_id)
                 db.session.add(user_book)
                 db.session.commit()
-                book2 = Book.query.filter(Book.id == book_id).first()
-                print(book.quantity == book2.quantity)
                 return jsonify({"result": "success"})
             else: 
                 return jsonify({"result": "fail"})
     
 
+# 책 상세 페이지
+@bp.route('/book/<int:book_id>', methods=["GET"])
+def book_info(book_id):
+    book = Book.query.filter(Book.id == book_id).first()
+
+    if 'login' not in session:
+        return render_template('book.html', book=book)
+    else:
+        if session['login'] is None:
+            return render_template('book.html', book=book)
+        else:
+            user = User.query.filter(User.email == session['login']).first()
+            return render_template('book.html', book=book, user=user)
+
+    return render_template('book.html', book=book)
