@@ -1,0 +1,152 @@
+{% extends 'navbar.html' %}
+
+{% block customCss %}
+    <link rel="stylesheet" href="../static/custom/navbar.css">
+    <link rel="stylesheet" href="../static/custom/book.css">
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        function borrow(id) {
+            $.ajax({
+                url: '/borrow',
+                type: 'patch',
+                data: {
+                    'book_id': id
+                },
+                success: function(res) {
+                    if(res['result'] == 'success') {
+                        alert('대여하기 완료!📘')
+                        window.location.href = '/'
+                    } else if(res['result'] == 'fail') {
+                        alert('책이 모자라서 대여하실 수 없어요😭 다른 책을 먼저 빌리시는건 어떨지?!')
+                    } else {
+                        alert('로그인을 먼저 해주세요!')
+                        window.location.href = '/login'
+                    }
+                }
+            })
+        }
+        // 리뷰 남기기
+        function postReview(id) {
+            let rating = $('select[name=rating]').val()
+            let content = $('#review_content').val()
+            $.ajax({
+                url: `/review/${id}`,
+                type: 'post',
+                data: {
+                    'book_id': id,
+                    'rating': rating,
+                    'content': content
+                }, success: function(res) {
+                    if(res['result'] == 'success') {
+                        alert('리뷰작성 성공!📝')
+                        window.location.reload()
+                    }
+                }
+            })
+        }
+        // 리뷰 삭제하기
+        function deleteReview(book_id, review_id) {
+            $.ajax({
+                url: `/delete_review/${book_id}/${review_id}`,
+                type: 'delete',
+                data: {
+                    'review_id': review_id
+                },
+                success: function(res) {
+                    if(res['result'] == 'success') {
+                        alert('리뷰삭제 성공!')
+                        window.location.reload()
+                    } else if(res['result'] == 'user_error') {
+                        alert('해당 리뷰를 삭제할 권한이 없습니다!')
+                    } else {
+                        alert('리뷰를 삭제하지 못했습니다..')
+                    }
+                }
+            })
+        }
+    </script>
+{% endblock %}
+
+{% if book %}
+{% block content %}
+<section class="py-5">
+    <div class="container px-4 px-lg-5 my-5">
+        <div class="row gx-4 gx-lg-5 align-items-center">
+            <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0" src="../static/book_img/{{ book.id }}.jpg" alt="book1 image" /></div>
+            <div class="col-md-6">
+                <!-- <div class="small mb-1">SKU: BST-498</div> -->
+                <h1 class="display-5 fw-bolder">{{ book.title }}</h1>
+                <div class="fs-5 mb-5">
+                    <!-- <span class="text-decoration-line-through">$45.00</span>
+                    <span>$40.00</span> -->
+                </div>
+                <div class="lead">
+                    <p>출판사 : {{ book.publisher }}</p>
+                    <p>저자 : {{ book.author }}</p>
+                    <p>출간일 : {{ book.release_date }}</p>
+                    <p>페이지 수 : {{ book.pages }}</p>
+                    <p>ISBN 코드 : {{ book.isbn_code }}</p>
+                </div>
+                <div class="d-flex">
+                    <h4>{{ book.quantity }}권 남음</h4>
+                    <button class="btn btn-outline-dark flex-shrink-0" type="button" onclick="borrow('{{ book.id }}')">
+                        대여하기
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12">
+            <h4>{{ book.introduction }}</h4>
+            <p>{{ book.description }}</p>
+        </div>
+        <!-- 로그인한 유저만 리뷰작성 가능 -->
+        {% if user %}
+        <div class="card mb-2">
+            <div class="card-header bg-warning text-white">
+                도서 감상평
+            </div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item">
+                        <select name="rating" class="mb-3">
+                            <option value="5">⭐️이 다섯개!</option>
+                            <option value="4">⭐️이 네개!</option>
+                            <option value="3">⭐️이 세개!</option>
+                            <option value="2">⭐️이 두개!</option>
+                            <option value="1">⭐️이 한개!</option>
+                        </select>
+                        <textarea class="form-control" id="review_content">
+                        </textarea>
+                        <button type="button" class="btn btn-warning mt-3" onclick="postReview('{{ book.id }}')">
+                            post
+                        </button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+        {% if reviews %}
+        <div class="card border-dark mb-2">
+            <div class="card-header bg-warning text-white">Review</div>
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    {% for review in reviews %}
+                    <li class="list-group-item" id="review_list">
+                        <p>{{ review.posted_at }}</p>
+                        <p>{{ review.user_email }}</p>
+                        <span>⭐X{{ review.rating }}</span><span>{{ review.content }}</span>
+                        {% if user %}
+                        <button class="btn btn-warning" onclick="deleteReview('{{ book.id }}', '{{ review.id }}')">삭제</button>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock%}
+{% endif %}

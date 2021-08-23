@@ -1,0 +1,50 @@
+{% extends 'navbar.html' %}
+
+{% block customCss %}
+    <link rel="stylesheet" href="../static/custom/navbar.css">
+    <link rel="stylesheet" href="../static/custom/borrowed_books.css">
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function return_book(id) {
+        $.ajax({
+            url: '/return_book',
+            method: 'patch',
+            data: {
+                'id': id
+            },
+            success: function(res) {
+                if(res['result'] == 'success') {
+                    alert('반납하기 완료!')
+                    window.location.reload()
+                }
+            }
+        })
+    }
+</script>
+{% endblock %}
+
+{% block content %}
+{% if borrowed_books %}
+    <div class="container">
+        <div class="row">
+            {% for borrowed_book in borrowed_books %}
+            <div class="col-md-3">
+                <div class="card mt-3">
+                    <img class="card-img-top" src="../static/book_img/{{ borrowed_book.book_id }}.jpg"alt="book image">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ borrowed_book.book_title }}</h5>
+                        <button class="btn btn-warning" onclick="return_book('{{ borrowed_book.id }}')">
+                            반납하기
+                        </button>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% else %}
+    <p>도서 목록을 불러오지 못했어요😭</p>
+    {% endif %}
+{% endblock %}

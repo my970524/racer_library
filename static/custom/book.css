@@ -1,0 +1,57 @@
+.py-5 .container .row .col-md-6 .d-flex h4 {
+    background-color: #ffc107;
+    color: #fff;
+    border-radius: 0.25rem;
+    box-sizing: border-box;
+    padding: 6px 12px;
+    margin: 0 20px;    
+}
+
+.py-5 .container .col-md-12 {
+    border: 1px solid #343a40;
+    border-radius: 0.25rem;
+    box-sizing: border-box;
+    padding: 20px;
+    margin: 20px 0;
+    color: #343a40;
+}
+.py-5 .container .row .col-md-12 h4 {
+    margin-bottom: 20px;
+}
+
+body > section > div > div.card.mb-2 {
+    border: 1px solid #343a40;
+}
+
+#review_content {
+    border: 1px solid #343a40;
+}
+
+body > section > div > div.card.mb-2 > div.card-body > ul > li > button {
+    color: #fff;
+}
+
+body > section > div > div.card.mb-2 > div.card-body > ul > li > div {
+    margin-top: 15px;
+    width: 120px;
+    padding: .7rem .75rem;
+    border-radius: 0.25rem;
+    display: flex;
+    justify-content: space-around;
+}
+
+body > section > div > div.card.mb-2 > div.card-body > ul > li > select {
+    padding: 3px 5px;
+}
+
+#review_list p {
+    margin-bottom: 3px;
+    color: #343a40;
+}
+#review_list span:nth-child(3) {
+    margin-right: 5px;
+    font-size: 20px;
+}
+#review_list span:nth-child(4) {
+    font-size: 18px;
+}
