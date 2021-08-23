@@ -75,7 +75,7 @@ def login():
 #로그아웃    
 @bp.route('/logout')
 def logout():
-    session['login'] = None
+    session.clear()
     return redirect('/')
 
 # 대여하기 
