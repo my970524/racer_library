@@ -23,6 +23,16 @@ body > section > div > div.card.mb-2 {
     border: 1px solid #343a40;
 }
 
+#notice {
+    display: flex;
+    justify-content: center;
+    width: 300px;
+    margin: 20px auto;
+}
+#notice p {
+    margin: 0;
+}
+
 #review_content {
     border: 1px solid #343a40;
 }

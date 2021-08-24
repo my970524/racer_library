@@ -84,7 +84,6 @@ def borrow():
     book_id = request.form['book_id']
 
     book = db.session.query(Book).filter(Book.id == book_id).first()
-
     book_title = book.title
     
     if 'login' not in session:
@@ -101,7 +100,6 @@ def borrow():
                 return jsonify({"result": "success"})
             else: 
                 return jsonify({"result": "fail"})
-
 
 # 대여기록
 @bp.route('/borrowed_books', methods=["GET"])
