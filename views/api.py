@@ -147,11 +147,21 @@ def post_review(book_id):
     content = request.form['content']
     user_email = session['login']
     book_id = book_id
-    
+    # 리뷰 데이터 추가
     review = Review(user_email, book_id, rating, content)
     db.session.add(review)
     db.session.commit()
+    # rating 평균 구하고 book의 rating 수정
+    reviews = db.session.query(Review).filter(Review.book_id == book_id).all()
+    sum = 0
+    for review in reviews:
+        sum += review.rating
+    avg_rating = round(sum / len(reviews))
 
+    book = db.session.query(Book).filter(Book.id == book_id).first()
+    book.rating = avg_rating
+    db.session.commit()
+    
     return jsonify({"result": 'success'})
 
 # 리뷰 삭제
@@ -167,4 +177,19 @@ def delete_review(book_id, review_id):
     else:
         db.session.delete(review)
         db.session.commit()
+        # rating 평균 구하고 book의 rating 수정
+        reviews = db.session.query(Review).filter(Review.book_id == book_id).all()
+        sum = 0
+        avg_rating = 0
+        for review in reviews:
+            sum += review.rating
+            if len(reviews) > 0:
+                avg_rating = round(sum / len(reviews))
+
+
+        book = db.session.query(Book).filter(Book.id == book_id).first()
+        book.rating = avg_rating
+        db.session.commit()
+
         return jsonify({"result": "success"})
+
