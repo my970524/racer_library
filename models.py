@@ -62,7 +62,7 @@ class Review(db.Model):
     book_id = db.Column(db.Integer, db.ForeignKey('book.id'), nullable=True)
     rating = db.Column(db.Integer, nullable=True)
     content = db.Column(db.Text())
-    posted_at = db.Column(db.DateTime, default=datetime.utcnow)
+    posted_at = db.Column(db.DateTime, default=datetime.now)
 
     def __init__(self, user_email, book_id, rating, content):
         self.user_email = user_email

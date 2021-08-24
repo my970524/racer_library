@@ -129,7 +129,7 @@ def return_book():
 def book_info(book_id):
     book = db.session.query(Book).filter(Book.id == book_id).first()
     
-    reviews = db.session.query(Review).filter(Review.book_id == book_id).all()
+    reviews = db.session.query(Review).filter(Review.book_id == book_id).order_by(Review.posted_at.desc()).all()
 
     if 'login' not in session:
         return render_template('book.html', book=book, reviews=reviews)
