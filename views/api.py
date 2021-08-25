@@ -19,11 +19,13 @@ def home():
     if 'login' not in session:
         return render_template('main.html', books=books)
 
-    if session['login'] is not None:
-        user = db.session.query(User).filter(User.email == session['login']).first()
-        return render_template('main.html', books=books, user=user)
-    else:
+    if session['login'] is None:
         return render_template('main.html', books=books)
+
+    user = db.session.query(User).filter(User.email == session['login']).first()
+    return render_template('main.html', books=books, user=user)
+    
+        
 
 # 회원가입
 @bp.route('/register', methods=["GET", "Post"])
@@ -63,14 +65,16 @@ def login():
 
         user = db.session.query(User).filter(User.email == email).first()
 
-        if user is not None:
-            if bcrypt.check_password_hash(user.password, password):
-                session['login'] = user.email
-                return jsonify({"result": "success"})
-            else:
-                return jsonify({"result": "fail"})
-        else:
+        if user is None:
             return jsonify({"result": "noUser"})
+
+        if bcrypt.check_password_hash(user.password, password):
+            session['login'] = user.email
+            return jsonify({"result": "success"})
+        else:
+            return jsonify({"result": "fail"})
+        
+            
 
 #로그아웃    
 @bp.route('/logout')
@@ -88,18 +92,18 @@ def borrow():
     
     if 'login' not in session:
         return jsonify({"result": "login_fail"})
-    else:
-        if session['login'] is None:
-            return jsonify({"result": "login_fail"})
-        else:
-            if book.quantity > 0:
-                book.quantity -= 1 
-                user_book = User_Book(session['login'], book_id, book_title)
-                db.session.add(user_book)
-                db.session.commit()
-                return jsonify({"result": "success"})
-            else: 
-                return jsonify({"result": "fail"})
+
+    if session['login'] is None:
+        return jsonify({"result": "login_fail"})
+
+    if book.quantity > 0:
+        book.quantity -= 1 
+        user_book = User_Book(session['login'], book_id, book_title)
+        db.session.add(user_book)
+        db.session.commit()
+        return jsonify({"result": "success"})
+    else: 
+        return jsonify({"result": "fail"})
 
 # 대여기록
 @bp.route('/borrowed_books', methods=["GET"])
@@ -149,13 +153,13 @@ def post_review(book_id):
     review = Review(user_email, book_id, rating, content)
     db.session.add(review)
     db.session.commit()
-    # rating 평균 구하고 book의 rating 수정
+    # 해당 도서의 리뷰들 가져오고 별점 평균 구하기
     reviews = db.session.query(Review).filter(Review.book_id == book_id).all()
     sum = 0
     for review in reviews:
         sum += review.rating
     avg_rating = round(sum / len(reviews))
-
+    # 해당 도서의 평균 별점 수정
     book = db.session.query(Book).filter(Book.id == book_id).first()
     book.rating = avg_rating
     db.session.commit()
